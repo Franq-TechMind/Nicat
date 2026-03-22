@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Result Detail | NICAT SMS{% endblock %}
+{% block page_title %}Result detail{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h3>Result Details</h3>
+        <div class="action-grid">
+            <a href="{{ url_for('results.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Results
+            </a>
+        </div>
+    </div>
+</section>
+<section class="stats-grid">
+    <div class="stat-card"><span>Student</span><strong>{{ result.student.full_name }}</strong></div>
+    <div class="stat-card"><span>Unit</span><strong>{{ result.unit.code }}</strong></div>
+    <div class="stat-card"><span>Final Mark</span><strong>{{ result.marks }}</strong></div>
+    <div class="stat-card"><span>Grade</span><strong>{{ result.grade }}</strong></div>
+</section>
+
+<section class="card mt-24">
+    <div class="section-head">
+        <h3>Actions</h3>
+        {% if current_user.role in ['super_admin', 'lecturer'] %}
+            {% if result.module_results %}
+            <a class="btn btn-primary" href="{{ url_for('results.edit_module_based', result_id=result.id) }}">Edit Module Result</a>
+            {% else %}
+            <a class="btn btn-primary" href="{{ url_for('results.edit', result_id=result.id) }}">Edit Result</a>
+            {% endif %}
+        {% endif %}
+    </div>
+</section>
+
+<section class="grid-2">
+    <div class="card">
+        <h3>Student Details</h3>
+        <p><strong>Full Name:</strong> {{ result.student.full_name }}</p>
+        <p><strong>Admission No:</strong> {{ result.student.admission_number }}</p>
+        <p><strong>Email:</strong> {{ result.student.email or 'N/A' }}</p>
+        <p><strong>Phone:</strong> {{ result.student.phone or 'N/A' }}</p>
+        <p><strong>Program:</strong> {{ result.student.program.name if result.student.program else 'N/A' }}</p>
+        <p><strong>Status:</strong> {{ result.student.status }}</p>
+    </div>
+    <div class="card">
+        <h3>Result Summary</h3>
+        <p><strong>Unit:</strong> {{ result.unit.name }} ({{ result.unit.code }})</p>
+        <p><strong>Semester:</strong> {{ result.semester.name }} - {{ result.semester.academic_year.name }}</p>
+        <p><strong>Final Mark:</strong> {{ result.marks }}</p>
+        <p><strong>Grade:</strong> {{ result.grade }}</p>
+        <p><strong>Remarks:</strong> {{ result.remarks }}</p>
+        <p><strong>Entered by:</strong> {{ result.entered_by if result.entered_by else 'Unknown' }}</p>
+        <p><strong>Date:</strong> {{ result.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+    </div>
+</section>
+
+{% if result.module_results %}
+<section class="mt-24">
+    <h3>Module Scores Breakdown</h3>
+    <div class="grid-3">
+        {% for module in result.module_results|sort(attribute='module_number') %}
+        <div class="card inner-card">
+            <h4>Module {{ module.module_number }}</h4>
+            <p><strong>Raw Total:</strong> {{ module.raw_total }} / 110</p>
+            <p><strong>Converted:</strong> {{ module.converted_total }} / 100</p>
+            <p><strong>Grade:</strong> {{ module.grade }}</p>
+            <p><strong>Remarks:</strong> {{ module.remarks }}</p>
+            <table>
+                <thead><tr><th>Component</th><th>Score</th><th>Max</th></tr></thead>
+                <tbody>
+                    {% for item in module.component_scores %}
+                    <tr><td>{{ item.component_name }}</td><td>{{ item.score }}</td><td>{{ item.max_marks }}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% else %}
+<section class="card mt-24">
+    <p><strong>Remarks:</strong> {{ result.remarks }}</p>
+    <p class="muted">This is a standard single-mark result record.</p>
+</section>
+{% endif %}
+
+<section class="card mt-24">
+    <div class="section-head">
+        <h3>Actions</h3>
+        <div class="action-grid">
+            {% if current_user.role in ['super_admin', 'lecturer'] %}
+                {% if result.module_results %}
+                <a class="btn btn-primary" href="{{ url_for('results.edit_module_based', result_id=result.id) }}">Edit Module Result</a>
+                {% else %}
+                <a class="btn btn-primary" href="{{ url_for('results.edit', result_id=result.id) }}">Edit Result</a>
+                {% endif %}
+                <form method="post" action="{{ url_for('results.delete', result_id=result.id) }}" onsubmit="return confirm('Delete this result?');" style="display:inline-block; margin:0;">
+                    <button class="btn btn-danger" type="submit">Delete</button>
+                </form>
+            {% endif %}
+            <a class="btn btn-secondary" href="{{ url_for('results.index') }}">Back to Results</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

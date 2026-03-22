@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Weekly Attendance Review | NICAT SMS{% endblock %}
+{% block page_title %}Weekly attendance review{% endblock %}
+{% block content %}
+<section class="card">
+    <h3>Attendance summary from {{ start_date }} to {{ end_date }}</h3>
+    {% if summary %}
+    <table>
+        <thead><tr><th>Student</th><th>Days Attended</th><th>Total Entries</th><th>Pending Approval</th></tr></thead>
+        <tbody>{% for name, item in summary.items() %}<tr><td>{{ name }}</td><td>{{ item.days_attended }}</td><td>{{ item.total_records }}</td><td>{{ item.pending }}</td></tr>{% endfor %}</tbody>
+    </table>
+    {% else %}<p class="empty-state">No attendance data for this week.</p>{% endif %}
+</section>
+{% endblock %}

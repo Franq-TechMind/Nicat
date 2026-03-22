@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} | NICAT SMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="card form-wrapper wide">
+<form method="post" class="form-grid two-col">
+{{ form.hidden_tag() }}
+<div>{{ form.unit_id.label }}{{ form.unit_id(class_='form-control') }}</div>
+<div>{{ form.lecturer_user_id.label }}{{ form.lecturer_user_id(class_='form-control') }}</div>
+<div>{{ form.day_of_week.label }}{{ form.day_of_week(class_='form-control') }}</div>
+<div>{{ form.room.label }}{{ form.room(class_='form-control') }}</div>
+<div>{{ form.start_time.label }}{{ form.start_time(class_='form-control', placeholder='08:00') }}</div>
+<div>{{ form.end_time.label }}{{ form.end_time(class_='form-control', placeholder='10:00') }}</div>
+<div class="span-2">{{ form.submit(class_='btn btn-primary') }}</div>
+</form>
+</section>
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | NICAT SCHOOL MANAGEMENT SYSTEM{% endblock %}
+{% block page_title %}Operations dashboard{% endblock %}
+{% block content %}
+<section class="stats-grid">
+    <div class="stat-card"><span>Students</span><strong>{{ stats.students }}</strong></div>
+    <div class="stat-card"><span>Lecturers</span><strong>{{ context.get('lecturer_count', 0) if current_role == 'super_admin' else '-' }}</strong></div>
+    <div class="stat-card"><span>Programs</span><strong>{{ stats.programs }}</strong></div>
+    <div class="stat-card"><span>Units</span><strong>{{ stats.units }}</strong></div>
+    <div class="stat-card"><span>Applications</span><strong>{{ stats.applications }}</strong></div>
+    <div class="stat-card"><span>Users</span><strong>{{ stats.users }}</strong></div>
+    <div class="stat-card"><span>Revenue</span><strong>KES {{ '%.2f'|format(stats.revenue) }}</strong></div>
+    <div class="stat-card"><span>Outstanding</span><strong>KES {{ '%.2f'|format(stats.outstanding) }}</strong></div>
+</section>
+
+<section class="grid-2 mt-24">
+    <div class="card">
+        <div class="section-head"><h3>Quick actions</h3></div>
+        <div class="action-grid">
+            {% if current_role == 'super_admin' %}
+                <a class="btn btn-primary" href="{{ url_for('auth.create_user') }}">Create User</a>
+                <a class="btn btn-primary" href="{{ url_for('academics.assign_lecturer_unit') }}">Assign Lecturer to Unit</a>
+                <a class="btn btn-secondary" href="{{ url_for('academics.assign_student_to_lecturer') }}">Assign Student to Lecturer</a>
+                <a class="btn btn-secondary" href="{{ url_for('academics.create_timetable_entry') }}">Add Timetable Entry</a>
+            {% endif %}
+            {% if current_role in ['super_admin', 'registrar', 'lecturer'] %}<a class="btn btn-primary" href="{{ url_for('students.create') }}">Add Student</a>{% endif %}
+            {% if current_role in ['super_admin', 'finance'] %}<a class="btn btn-secondary" href="{{ url_for('finance.create_payment') }}">Record Payment</a>{% endif %}
+            {% if current_role in ['super_admin', 'lecturer'] %}<a class="btn btn-secondary" href="{{ url_for('results.create_module_based') }}">Capture Module Results</a>{% endif %}
+        </div>
+    </div>
+    <div class="card">
+        <div class="section-head"><h3>Alerts & attention center</h3></div>
+        {% if current_role == 'super_admin' %}
+        <ul class="clean-list">
+            <li>Pending attendance approvals: <strong>{{ context.get('pending_attendance_count', 0) }}</strong></li>
+            <li>Lecturers without units: <strong>{{ context.get('lecturers_without_units_count', 0) }}</strong></li>
+            <li>Students not assigned to lecturers: <strong>{{ context.get('unassigned_students_count', 0) }}</strong></li>
+            <li>Units without timetable entries: <strong>{{ context.get('units_without_timetable_count', 0) }}</strong></li>
+            <li>Programs without assessment schemes: <strong>{{ context.get('programs_without_schemes_count', 0) }}</strong></li>
+            <li>Inactive users: <strong>{{ context.get('inactive_users_count', 0) }}</strong></li>
+            <li>Low-attendance students: <strong>{{ context.get('low_attendance_count', 0) }}</strong></li>
+        </ul>
+        {% else %}
+        <p class="muted">Role-specific alerts appear here.</p>
+        {% endif %}
+    </div>
+</section>
+
+{% if current_role == 'super_admin' %}
+<section class="card mt-24">
+    <div class="section-head">
+        <h3>Lecturer management</h3>
+        <a class="btn btn-small btn-primary" href="{{ url_for('auth.users') }}">Manage Users</a>
+    </div>
+    {% if context.get('lecturer_rows') %}
+    <table>
+        <thead><tr><th>Name</th><th>Department</th><th>Units</th><th>Students</th><th>Timetable</th><th>Results</th><th>Pending Approvals</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for row in context.get('lecturer_rows') %}
+            <tr>
+                <td>{{ row.lecturer.full_name }}</td>
+                <td>{{ row.lecturer.department_name or '-' }}</td>
+                <td>{{ row.units_count }}</td>
+                <td>{{ row.students_count }}</td>
+                <td>{{ row.timetable_count }}</td>
+                <td>{{ row.results_count }}</td>
+                <td>{{ row.pending_attendance }}</td>
+                <td>{{ 'Active' if row.lecturer.is_active_user else 'Inactive' }}</td>
+                <td><a class="btn btn-small btn-secondary" href="{{ url_for('academics.lecturer_detail', lecturer_id=row.lecturer.id) }}">Open</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}<p class="empty-state">No lecturers created yet.</p>{% endif %}
+</section>
+
+<section class="grid-2 mt-24">
+    <div class="card">
+        <div class="section-head"><h3>Student operations snapshot</h3></div>
+        {% if context.get('recent_students') %}
+        <table>
+            <thead><tr><th>Admission No</th><th>Name</th><th>Program</th><th>Portal</th></tr></thead>
+            <tbody>{% for student in context.get('recent_students') %}<tr><td>{{ student.admission_number }}</td><td>{{ student.full_name }}</td><td>{{ student.program.code }}</td><td>{{ 'Ready' if student.portal_ready else 'Pending' }}</td></tr>{% endfor %}</tbody>
+        </table>
+        {% else %}<p class="empty-state">No students yet.</p>{% endif %}
+    </div>
+    <div class="card">
+        <div class="section-head"><h3>Low attendance risk</h3></div>
+        {% if context.get('low_attendance') %}
+        <table>
+            <thead><tr><th>Student</th><th>Attendance %</th></tr></thead>
+            <tbody>{% for student, pct in context.get('low_attendance') %}<tr><td>{{ student.full_name }}</td><td>{{ pct }}%</td></tr>{% endfor %}</tbody>
+        </table>
+        {% else %}<p class="empty-state">No low-attendance alerts at the moment.</p>{% endif %}
+    </div>
+</section>
+
+<section class="grid-2 mt-24">
+    <div class="card">
+        <div class="section-head"><h3>Finance snapshot</h3></div>
+        {% if context.get('recent_payments') %}
+        <table>
+            <thead><tr><th>Receipt</th><th>Student</th><th>Amount</th><th>Date</th></tr></thead>
+            <tbody>{% for payment in context.get('recent_payments') %}<tr><td>{{ payment.receipt_number }}</td><td>{{ payment.student.full_name if payment.student else '-' }}</td><td>KES {{ '%.2f'|format(payment.amount) }}</td><td>{{ payment.paid_at.strftime('%Y-%m-%d') }}</td></tr>{% endfor %}</tbody>
+        </table>
+        {% else %}<p class="empty-state">No recent payments.</p>{% endif %}
+    </div>
+    <div class="card">
+        <div class="section-head"><h3>Admissions snapshot</h3></div>
+        {% if context.get('recent_applications') %}
+        <table>
+            <thead><tr><th>Application</th><th>Applicant</th><th>Status</th></tr></thead>
+            <tbody>{% for app in context.get('recent_applications') %}<tr><td>{{ app.application_number }}</td><td>{{ app.applicant_name }}</td><td>{{ app.status }}</td></tr>{% endfor %}</tbody>
+        </table>
+        {% else %}<p class="empty-state">No recent applications.</p>{% endif %}
+    </div>
+</section>
+
+<section class="grid-2 mt-24">
+    <div class="card">
+        <div class="section-head"><h3>Recent results activity</h3></div>
+        {% if context.get('recent_results') %}
+        <table>
+            <thead><tr><th>Student</th><th>Unit</th><th>Mark</th><th>Grade</th></tr></thead>
+            <tbody>{% for result in context.get('recent_results') %}<tr><td>{{ result.student.full_name }}</td><td>{{ result.unit.code }}</td><td>{{ result.marks }}</td><td>{{ result.grade }}</td></tr>{% endfor %}</tbody>
+        </table>
+        {% else %}<p class="empty-state">No recent results yet.</p>{% endif %}
+    </div>
+    <div class="card">
+        <div class="section-head"><h3>Timetable snapshot</h3></div>
+        {% if context.get('today_classes') %}
+        <table>
+            <thead><tr><th>Day</th><th>Unit</th><th>Lecturer</th><th>Time</th></tr></thead>
+            <tbody>{% for entry in context.get('today_classes') %}<tr><td>{{ entry.day_of_week }}</td><td>{{ entry.unit.code }}</td><td>{{ entry.lecturer.full_name if entry.lecturer else '-' }}</td><td>{{ entry.start_time }} - {{ entry.end_time }}</td></tr>{% endfor %}</tbody>
+        </table>
+        {% else %}<p class="empty-state">No timetable entries yet.</p>{% endif %}
+    </div>
+</section>
+{% endif %}
+
+{% if current_role == 'lecturer' %}
+<section class="grid-2 mt-24">
+    <div class="card"><h3>Assigned units</h3>{% if context.get('assigned_units') %}<ul class="clean-list">{% for assignment in context.get('assigned_units') %}<li>{{ assignment.unit.name }} ({{ assignment.unit.code }})</li>{% endfor %}</ul>{% else %}<p class="empty-state">No units assigned yet.</p>{% endif %}</div>
+    <div class="card"><h3>Lecturer timetable</h3>{% if context.get('timetable') %}<ul class="clean-list">{% for entry in context.get('timetable') %}<li>{{ entry.day_of_week }} — {{ entry.unit.code }} — {{ entry.start_time }} to {{ entry.end_time }}</li>{% endfor %}</ul>{% else %}<p class="empty-state">No timetable entries yet.</p>{% endif %}</div>
+</section>
+{% endif %}
+
+{% if current_role == 'student' %}
+<section class="card mt-24"><h3>My timetable</h3>{% if context.get('timetable') %}<ul class="clean-list">{% for entry in context.get('timetable') %}<li>{{ entry.day_of_week }} — {{ entry.unit.code }} — {{ entry.start_time }} to {{ entry.end_time }}</li>{% endfor %}</ul>{% else %}<p class="empty-state">No timetable entries yet.</p>{% endif %}</section>
+{% endif %}
+{% endblock %}

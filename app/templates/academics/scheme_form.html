@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} | NICAT SMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="card form-wrapper wide">
+    <form method="post" class="form-grid two-col">
+        {{ form.hidden_tag() }}
+        <div>{{ form.name.label }}{{ form.name(class_='form-control') }}</div>
+        <div>{{ form.module_count.label }}{{ form.module_count(class_='form-control') }}</div>
+        <div>{{ form.raw_total.label }}{{ form.raw_total(class_='form-control') }}</div>
+        <div>{{ form.converted_total.label }}{{ form.converted_total(class_='form-control') }}</div>
+        <div class="span-2">{{ form.submit(class_='btn btn-primary') }}</div>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NICAT SMS{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="app-shell">
+    <header class="top-nav">
+        <div class="nav-brand">
+            <div class="brand-badge">N</div>
+            <div>
+                <h2>NICAT SMS</h2>
+                <p>College ERP</p>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <a href="{{ url_for('main.index') }}"><i class="fas fa-home"></i> Home</a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                {% if current_user.role == 'super_admin' %}
+                    <a href="{{ url_for('lecturers.index') }}"><i class="fas fa-chalkboard-teacher"></i> Lecturers</a>
+                {% endif %}
+                {% if current_user.role in ['super_admin', 'registrar', 'principal'] %}
+                    <a href="{{ url_for('admissions.index') }}"><i class="fas fa-user-plus"></i> Admissions</a>
+                {% endif %}
+                {% if current_user.role in ['super_admin', 'registrar', 'finance', 'lecturer', 'principal'] %}
+                    <a href="{{ url_for('students.index') }}"><i class="fas fa-users"></i> Students</a>
+                {% endif %}
+                {% if current_user.role == 'lecturer' %}
+                    <a href="{{ url_for('students.lecturer_workspace') }}"><i class="fas fa-briefcase"></i> Workspace</a>
+                {% endif %}
+                {% if current_user.role in ['super_admin', 'registrar', 'principal'] %}
+                    <a href="{{ url_for('academics.index') }}"><i class="fas fa-graduation-cap"></i> Academics</a>
+                {% endif %}
+                {% if current_user.role in ['super_admin', 'finance', 'principal'] %}
+                    <a href="{{ url_for('finance.index') }}"><i class="fas fa-money-bill-wave"></i> Finance</a>
+                {% endif %}
+                {% if current_user.role in ['super_admin', 'registrar', 'lecturer', 'principal', 'student'] %}
+                    <a href="{{ url_for('attendance.index') }}"><i class="fas fa-calendar-check"></i> Attendance</a>
+                {% endif %}
+                {% if current_user.role in ['super_admin', 'registrar', 'lecturer', 'principal'] %}
+                    <a href="{{ url_for('results.index') }}"><i class="fas fa-chart-line"></i> Results</a>
+                {% endif %}
+                {% if current_user.role == 'student' %}
+                    <a href="{{ url_for('students.portal') }}"><i class="fas fa-user-circle"></i> My Portal</a>
+                {% endif %}
+                {% if current_user.role == 'super_admin' %}
+                    <a href="{{ url_for('auth.users') }}"><i class="fas fa-user-cog"></i> User Mgmt</a>
+                {% endif %}
+                <a href="{{ url_for('auth.profile') }}"><i class="fas fa-user"></i> Profile</a>
+                <a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="{{ url_for('auth.student_signup') }}"><i class="fas fa-user-plus"></i> Student Signup</a>
+                <a href="{{ url_for('auth.register_admin') }}"><i class="fas fa-crown"></i> Create Super Admin</a>
+            {% endif %}
+        </nav>
+        <div class="nav-user">
+            {% if current_user.is_authenticated %}
+                <span>{{ current_user.full_name }}</span>
+                <small>{{ current_user.role.replace('_', ' ')|title }}</small>
+            {% endif %}
+        </div>
+        <button class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+    <main class="main-content">
+        <div class="content-wrapper">
+            <header class="page-header">
+                <h1>{% block page_title %}NICAT School Management System{% endblock %}</h1>
+                <p>Nanyuki Institute of Communication and Advanced Technology</p>
+            </header>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <section class="flash-wrap">
+                        {% for category, message in messages %}
+                            <div class="flash flash-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </section>
+                {% endif %}
+            {% endwith %}
+            <div class="content-area">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Action Menu -->
+    {% if current_user.is_authenticated %}
+    <div class="fab-menu">
+        <button class="fab-main" id="fab-toggle">
+            <i class="fas fa-plus"></i>
+        </button>
+        <div class="fab-options" id="fab-options">
+            <a href="{{ url_for('main.dashboard') }}" class="fab-option" title="Dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+            </a>
+            {% if current_user.role in ['super_admin', 'lecturer'] %}
+            <a href="{{ url_for('results.create_module_based') }}" class="fab-option" title="New Module Result">
+                <i class="fas fa-plus-circle"></i>
+            </a>
+            <a href="{{ url_for('results.create') }}" class="fab-option" title="New Standard Result">
+                <i class="fas fa-file-alt"></i>
+            </a>
+            {% endif %}
+            {% if current_user.role in ['super_admin', 'registrar', 'finance', 'lecturer', 'principal'] %}
+            <a href="{{ url_for('students.create') }}" class="fab-option" title="New Student">
+                <i class="fas fa-user-plus"></i>
+            </a>
+            {% endif %}
+            {% if current_user.role in ['super_admin', 'finance'] %}
+            <a href="{{ url_for('finance.create_payment') }}" class="fab-option" title="Record Payment">
+                <i class="fas fa-money-bill-wave"></i>
+            </a>
+            {% endif %}
+            <a href="{{ url_for('auth.logout') }}" class="fab-option fab-logout" title="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

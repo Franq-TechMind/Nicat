@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Signup | NICAT SMS{% endblock %}
+{% block page_title %}Student account signup{% endblock %}
+
+{% block content %}
+<section class="form-wrapper card narrow">
+    <h2>Create your student portal account</h2>
+    <p class="muted">Your admission number and email must already exist in the student records.</p>
+    <form method="post" class="form-grid">
+        {{ form.hidden_tag() }}
+        <div>{{ form.admission_number.label }}{{ form.admission_number(class_='form-control') }}</div>
+        <div>{{ form.email.label }}{{ form.email(class_='form-control') }}</div>
+        <div>{{ form.password.label }}{{ form.password(class_='form-control') }}</div>
+        <div>{{ form.confirm_password.label }}{{ form.confirm_password(class_='form-control') }}</div>
+        {{ form.submit(class_='btn btn-primary full') }}
+    </form>
+</section>
+{% endblock %}

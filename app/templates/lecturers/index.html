@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Lecturers | NICAT SMS{% endblock %}
+{% block page_title %}Lecturer management{% endblock %}
+{% block content %}
+<section class="stats-grid">
+    <div class="stat-card"><span>Lecturers</span><strong>{{ summary.lecturers }}</strong></div>
+    <div class="stat-card"><span>Unit Assignments</span><strong>{{ summary.unit_assignments }}</strong></div>
+    <div class="stat-card"><span>Student Assignments</span><strong>{{ summary.student_assignments }}</strong></div>
+    <div class="stat-card"><span>Timetable Entries</span><strong>{{ summary.timetable_entries }}</strong></div>
+</section>
+
+<section class="card mt-24">
+    <div class="section-head">
+        <h3>Search and filter lecturers</h3>
+        <div class="action-grid">
+            <a class="btn btn-primary" href="{{ url_for('auth.create_user') }}">Create Lecturer User</a>
+            <a class="btn btn-secondary" href="{{ url_for('academics.assign_lecturer_unit') }}">Assign Unit</a>
+            <a class="btn btn-secondary" href="{{ url_for('academics.assign_student_to_lecturer') }}">Assign Student</a>
+        </div>
+    </div>
+    <form method="get" class="form-grid three-col">
+        <div>{{ form.q.label }}{{ form.q(class_='form-control', placeholder='Name, email, or staff ID') }}</div>
+        <div>{{ form.department_name.label }}{{ form.department_name(class_='form-control', placeholder='Department') }}</div>
+        <div>{{ form.status.label }}{{ form.status(class_='form-control') }}</div>
+        <div class="span-3">{{ form.submit(class_='btn btn-primary') }}</div>
+    </form>
+</section>
+
+<section class="card mt-24">
+    <div class="section-head"><h3>All lecturers</h3></div>
+    {% if lecturer_rows %}
+    <table>
+        <thead><tr><th>Name</th><th>Staff ID</th><th>Department</th><th>Specialization</th><th>Units</th><th>Students</th><th>Timetable</th><th>Results</th><th>Pending Approvals</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for row in lecturer_rows %}
+            <tr>
+                <td>{{ row.lecturer.full_name }}</td>
+                <td>{{ row.lecturer.staff_id or '-' }}</td>
+                <td>{{ row.lecturer.department_name or '-' }}</td>
+                <td>{{ row.lecturer.specialization or '-' }}</td>
+                <td>{{ row.units_count }}</td>
+                <td>{{ row.students_count }}</td>
+                <td>{{ row.timetable_count }}</td>
+                <td>{{ row.results_count }}</td>
+                <td>{{ row.pending_attendance }}</td>
+                <td>{{ 'Active' if row.lecturer.is_active_user else 'Inactive' }}</td>
+                <td class="actions">
+                    <a class="btn btn-small btn-secondary" href="{{ url_for('academics.lecturer_detail', lecturer_id=row.lecturer.id) }}">Open</a>
+                    <a class="btn btn-small btn-secondary" href="{{ url_for('auth.edit_user', user_id=row.lecturer.id) }}">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="empty-state">No lecturers found for the current filter.</p>
+    {% endif %}
+</section>
+{% endblock %}

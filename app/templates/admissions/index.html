@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Admissions | NICAT SMS{% endblock %}
+{% block page_title %}Admissions management{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <form method="get" class="search-inline">
+            <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search applicant or application number">
+            <button class="btn btn-secondary" type="submit">Search</button>
+        </form>
+        <a href="{{ url_for('admissions.create') }}" class="btn btn-primary">New Application</a>
+    </div>
+
+    {% if applications %}
+    <table>
+        <thead><tr><th>No.</th><th>Applicant</th><th>Email</th><th>Phone</th><th>Status</th><th>Student Link</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for application in applications %}
+            <tr>
+                <td>{{ application.application_number }}</td>
+                <td>{{ application.applicant_name }}</td>
+                <td>{{ application.email or '-' }}</td>
+                <td>{{ application.phone or '-' }}</td>
+                <td><span class="badge">{{ application.status }}</span></td>
+                <td>{{ application.student.admission_number if application.student else '-' }}</td>
+                <td class="actions">
+                    <a class="btn btn-small btn-secondary" href="{{ url_for('admissions.edit', application_id=application.id) }}">Edit</a>
+                    {% if not application.student_id %}
+                    <a class="btn btn-small btn-primary" href="{{ url_for('admissions.approve', application_id=application.id) }}">Approve</a>
+                    {% endif %}
+                    <form method="post" action="{{ url_for('admissions.delete', application_id=application.id) }}" onsubmit="return confirm('Delete this application?');">
+                        <button class="btn btn-small btn-danger" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="empty-state">No applications yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | NICAT SMS{% endblock %}
+{% block page_title %}A modern college management system{% endblock %}
+
+{% block content %}
+<section class="hero card">
+    <div>
+        <span class="pill">Powered by Franq Mwangi</span>
+        <h2>Admissions, students, fees, users and operations in one clean system.</h2>
+        <p>Built for NICAT to manage academic operations with role-based access, cleaner workflows and a strong admin foundation.</p>
+        <div class="hero-actions">
+            <a class="btn btn-primary" href="{{ url_for('auth.login') }}">Sign In</a>
+            <a class="btn btn-secondary" href="{{ url_for('auth.student_signup') }}">Student Signup</a>
+            <a class="btn btn-secondary" href="{{ url_for('auth.register_admin') }}">Create First Super Admin</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

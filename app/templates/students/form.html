@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} | NICAT SMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h3>{{ title }}</h3>
+        <div class="action-grid">
+            <a href="{{ url_for('students.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Students
+            </a>
+        </div>
+    </div>
+</section>
+<section class="card form-wrapper wide">
+    <form method="post" class="form-grid two-col">
+        {{ form.hidden_tag() }}
+        <div>{{ form.admission_number.label }}{{ form.admission_number(class_='form-control') }}</div>
+        <div>{{ form.program_id.label }}{{ form.program_id(class_='form-control') }}</div>
+        <div>{{ form.first_name.label }}{{ form.first_name(class_='form-control') }}</div>
+        <div>{{ form.last_name.label }}{{ form.last_name(class_='form-control') }}</div>
+        <div>{{ form.gender.label }}{{ form.gender(class_='form-control') }}</div>
+        <div>{{ form.date_of_birth.label }}{{ form.date_of_birth(class_='form-control') }}</div>
+        <div>{{ form.phone.label }}{{ form.phone(class_='form-control') }}</div>
+        <div>{{ form.email.label }}{{ form.email(class_='form-control') }}</div>
+        <div>{{ form.guardian_name.label }}{{ form.guardian_name(class_='form-control') }}</div>
+        <div>{{ form.guardian_phone.label }}{{ form.guardian_phone(class_='form-control') }}</div>
+        <div class="span-2">{{ form.address.label }}{{ form.address(class_='form-control') }}</div>
+        <div>{{ form.status.label }}{{ form.status(class_='form-control') }}</div>
+        <div class="span-2">{{ form.submit(class_='btn btn-primary') }}</div>
+    </form>
+</section>
+{% endblock %}

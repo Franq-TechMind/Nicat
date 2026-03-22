@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Receipt | NICAT SMS{% endblock %}
+{% block page_title %}Payment receipt{% endblock %}
+
+{% block content %}
+<section class="card print-card narrow-print">
+    <div class="section-head">
+        <div>
+            <h3>NICAT Official Receipt</h3>
+            <p class="muted">Receipt No: {{ payment.receipt_number }}</p>
+        </div>
+        <button class="btn btn-primary" onclick="window.print()">Print</button>
+    </div>
+    <p><strong>Student:</strong> {{ student.full_name }}</p>
+    <p><strong>Admission No:</strong> {{ student.admission_number }}</p>
+    <p><strong>Amount Paid:</strong> KES {{ '%.2f'|format(payment.amount) }}</p>
+    <p><strong>Method:</strong> {{ payment.method|upper }}</p>
+    <p><strong>Reference:</strong> {{ payment.reference or '-' }}</p>
+    <p><strong>Date:</strong> {{ payment.paid_at.strftime('%Y-%m-%d %H:%M') }}</p>
+    <hr>
+    <p><strong>Issued by:</strong> {{ current_user.full_name }}</p>
+    <p class="muted">Nanyuki Institute of Communication and Advanced Technology</p>
+</section>
+{% endblock %}

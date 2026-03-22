@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Results | NICAT SMS{% endblock %}
+{% block page_title %}Results center{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h3>Results records</h3>
+        <div class="action-grid">
+            {% if current_user.role in ['super_admin', 'lecturer'] %}
+            <a href="{{ url_for('results.create') }}" class="btn btn-primary">New Standard Result</a>
+            <a href="{{ url_for('results.create_module_based') }}" class="btn btn-secondary">New Module Result</a>
+            {% endif %}
+        </div>
+    </div>
+    {% if results %}
+    <table>
+        <thead><tr><th>Student</th><th>Unit</th><th>Semester</th><th>Final Mark</th><th>Grade</th><th>Remarks</th><th>Type</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td>{{ result.student.full_name }}</td>
+                <td>{{ result.unit.code }}</td>
+                <td>{{ result.semester.name }}</td>
+                <td>{{ result.marks }}</td>
+                <td><span class="badge">{{ result.grade }}</span></td>
+                <td>{{ result.remarks }}</td>
+                <td>
+                    {% if result.module_results %}
+                        <span class="badge" style="background: rgba(118, 214, 255, 0.2); color: #56c7ff; border-color: rgba(86,199,255,0.35);">Module Based</span>
+                    {% else %}
+                        <span class="badge" style="background: rgba(79, 140, 255, 0.15); color: #76a7ff;">Standard</span>
+                    {% endif %}
+                </td>
+                <td class="actions">
+                    <a class="btn btn-small btn-secondary" href="{{ url_for('results.detail', result_id=result.id) }}"><i class="fas fa-eye"></i> View</a>
+                    <button type="button" class="btn btn-small btn-secondary toggle-detail-btn" data-target="result-details-{{ result.id }}"><i class="fas fa-list"></i> Details</button>
+                    {% if current_user.role in ['super_admin', 'lecturer'] %}
+                        {% if result.module_results %}
+                        <a class="btn btn-small btn-secondary" href="{{ url_for('results.edit_module_based', result_id=result.id) }}"><i class="fas fa-edit"></i> Edit</a>
+                        {% else %}
+                        <a class="btn btn-small btn-secondary" href="{{ url_for('results.edit', result_id=result.id) }}"><i class="fas fa-edit"></i> Edit</a>
+                        {% endif %}
+                        <form method="post" action="{{ url_for('results.delete', result_id=result.id) }}" onsubmit="return confirm('Delete this result?');" style="display:inline-block; margin:0;">
+                            <button class="btn btn-small btn-danger" type="submit"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr id="result-details-{{ result.id }}" class="toggle-row" style="display:none;">
+                <td colspan="8" class="detail-panel">
+                    <div class="card inner-card" style="padding: 12px;">
+                        <strong>Student:</strong> {{ result.student.full_name }} / {{ result.student.admission_number }}<br>
+                        <strong>Unit:</strong> {{ result.unit.name }} ({{ result.unit.code }})<br>
+                        <strong>Semester:</strong> {{ result.semester.name }} - {{ result.semester.academic_year.name }}<br>
+                        <strong>Final:</strong> {{ result.marks }} ({{ result.grade }}), {{ result.remarks }}<br>
+                        {% if result.module_results %}
+                        <div style="margin-top: 10px;"><strong>Modules:</strong>
+                        <ul style="margin: 0 0 0 16px; padding-left: 0; list-style: disc; color: var(--text);">
+                            {% for module in result.module_results|sort(attribute='module_number') %}
+                            <li>Module {{ module.module_number }} - Raw: {{ module.raw_total }}; Converted: {{ module.converted_total }}; Grade: {{ module.grade }}; Remarks: {{ module.remarks }}</li>
+                            {% endfor %}
+                        </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="empty-state">No result records yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

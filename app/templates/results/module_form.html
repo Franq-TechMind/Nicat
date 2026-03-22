@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} | NICAT SMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h3>{{ title }}</h3>
+        <div class="action-grid">
+            <a href="{{ url_for('results.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Results
+            </a>
+        </div>
+    </div>
+</section>
+<section class="card form-wrapper wide">
+    <p class="muted">Use this for Computer Application for Business or any program assigned to a 3-module assessment scheme. Each module stores CAT, Group Work, and Final Exam separately, then converts the raw 110 total to 100 automatically.</p>
+    {% if not form.student_id.choices or not form.unit_id.choices or not form.semester_id.choices %}
+    <div class="flash flash-warning">This page needs valid students, units, and semesters before results can be saved. If a lecturer is logged in, they must also be assigned to units/students first.</div>
+    {% endif %}
+    <form method="post" class="form-grid" id="module-results-form">
+        {{ form.hidden_tag() }}
+        <div class="grid-3">
+            <div>{{ form.student_id.label }}{{ form.student_id(class_='form-control') }}</div>
+            <div>{{ form.unit_id.label }}{{ form.unit_id(class_='form-control') }}</div>
+            <div>{{ form.semester_id.label }}{{ form.semester_id(class_='form-control') }}</div>
+        </div>
+
+        <div class="grid-3">
+            <div class="card inner-card module-card" data-module="1">
+                <h3>Module 1</h3>
+                <div>{{ form.module_1.cat.label }}{{ form.module_1.cat(class_='form-control js-cat', placeholder='Out of 30') }}</div>
+                <div>{{ form.module_1.group_work.label }}{{ form.module_1.group_work(class_='form-control js-group', placeholder='Out of 20') }}</div>
+                <div>{{ form.module_1.final_exam.label }}{{ form.module_1.final_exam(class_='form-control js-final', placeholder='Out of 60') }}</div>
+                <div class="preview-box">
+                    <small>Raw Total:</small> <strong class="js-raw-total">0 / 110</strong><br>
+                    <small>Converted:</small> <strong class="js-converted-total">0 / 100</strong><br>
+                    <small>Grade:</small> <strong class="js-grade">-</strong>
+                </div>
+            </div>
+            <div class="card inner-card module-card" data-module="2">
+                <h3>Module 2</h3>
+                <div>{{ form.module_2.cat.label }}{{ form.module_2.cat(class_='form-control js-cat', placeholder='Out of 30') }}</div>
+                <div>{{ form.module_2.group_work.label }}{{ form.module_2.group_work(class_='form-control js-group', placeholder='Out of 20') }}</div>
+                <div>{{ form.module_2.final_exam.label }}{{ form.module_2.final_exam(class_='form-control js-final', placeholder='Out of 60') }}</div>
+                <div class="preview-box">
+                    <small>Raw Total:</small> <strong class="js-raw-total">0 / 110</strong><br>
+                    <small>Converted:</small> <strong class="js-converted-total">0 / 100</strong><br>
+                    <small>Grade:</small> <strong class="js-grade">-</strong>
+                </div>
+            </div>
+            <div class="card inner-card module-card" data-module="3">
+                <h3>Module 3</h3>
+                <div>{{ form.module_3.cat.label }}{{ form.module_3.cat(class_='form-control js-cat', placeholder='Out of 30') }}</div>
+                <div>{{ form.module_3.group_work.label }}{{ form.module_3.group_work(class_='form-control js-group', placeholder='Out of 20') }}</div>
+                <div>{{ form.module_3.final_exam.label }}{{ form.module_3.final_exam(class_='form-control js-final', placeholder='Out of 60') }}</div>
+                <div class="preview-box">
+                    <small>Raw Total:</small> <strong class="js-raw-total">0 / 110</strong><br>
+                    <small>Converted:</small> <strong class="js-converted-total">0 / 100</strong><br>
+                    <small>Grade:</small> <strong class="js-grade">-</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-24">
+            <h3>Overall preview</h3>
+            <p><strong>Average Converted Mark:</strong> <span id="overall-mark">0.00</span> / 100</p>
+            <p><strong>Final Grade:</strong> <span id="overall-grade">-</span></p>
+            <p class="muted">Each module is saved separately under the same result record.</p>
+        </div>
+
+        <button class="btn btn-primary" type="submit" id="save-module-results-btn">Save Module Results</button>
+    </form>
+</section>
+{% endblock %}

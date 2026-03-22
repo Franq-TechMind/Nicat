@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Bulk Attendance | NICAT SMS{% endblock %}
+{% block page_title %}Bulk attendance capture{% endblock %}
+{% block content %}
+<section class="card">
+    <form method="get" class="grid-2">
+        <div>{{ form.unit_id.label }}{{ form.unit_id(class_='form-control') }}</div>
+        <div class="align-end"><button class="btn btn-secondary" type="submit">Load Class</button></div>
+    </form>
+</section>
+<section class="card mt-24">
+    <form method="post" class="form-grid">
+        {{ form.hidden_tag() }}
+        <div class="grid-2">
+            <div>{{ form.unit_id.label }}{{ form.unit_id(class_='form-control') }}</div>
+            <div>{{ form.attendance_date.label }}{{ form.attendance_date(class_='form-control') }}</div>
+        </div>
+        {% if students %}
+        <table>
+            <thead><tr><th>Student</th><th>Status</th></tr></thead>
+            <tbody>
+            {% for row in form.rows %}
+            <tr>
+                <td>{{ row.student_name.data }}{{ row.student_id(type='hidden') }}{{ row.student_name(type='hidden') }}</td>
+                <td>{{ row.status(class_='form-control') }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {{ form.submit(class_='btn btn-primary') }}
+        {% else %}<p class="empty-state">Select a unit to load students for bulk attendance.</p>{% endif %}
+    </form>
+</section>
+{% endblock %}

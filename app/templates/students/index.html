@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Students | NICAT SMS{% endblock %}
+{% block page_title %}Student management{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <form method="get" class="search-inline">
+            <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search student or admission number">
+            <button class="btn btn-secondary" type="submit">Search</button>
+        </form>
+        {% if current_user.role in ['super_admin', 'registrar'] %}<a href="{{ url_for('students.create') }}" class="btn btn-primary">Add Student</a>{% endif %}
+    </div>
+
+    {% if students %}
+    <table>
+        <thead><tr><th>Admission No</th><th>Name</th><th>Email</th><th>Status</th><th>Program</th><th>Portal</th><th>Financial Balance</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.admission_number }}</td>
+                <td>{{ student.full_name }}</td>
+                <td>{{ student.email or '-' }}</td>
+                <td><span class="badge">{{ student.status }}</span></td>
+                <td>{{ student.program.name if student.program else '-' }}</td>
+                <td>{% if student.portal_ready %}Ready{% else %}Pending{% endif %} / {{ 'Linked' if student.user_account else 'No Account' }}</td>
+                <td>KES {{ '%.2f'|format(student.total_balance) }}</td>
+                <td class="actions">
+                    <a class="btn btn-small btn-secondary" href="{{ url_for('students.detail', student_id=student.id) }}">View</a>
+                    {% if current_user.role in ['super_admin', 'registrar'] %}
+                    <a class="btn btn-small btn-secondary" href="{{ url_for('students.edit', student_id=student.id) }}">Edit</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="empty-state">No students yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Pending Attendance | NICAT SMS{% endblock %}
+{% block page_title %}Pending attendance approvals{% endblock %}
+{% block content %}
+<section class="card">
+    {% if records %}
+    <table>
+        <thead><tr><th>Date</th><th>Student</th><th>Unit</th><th>Status</th><th>Submitted By</th><th>Action</th></tr></thead>
+        <tbody>{% for record in records %}<tr><td>{{ record.attendance_date.strftime('%Y-%m-%d') }}</td><td>{{ record.student.full_name }}</td><td>{{ record.unit.code }}</td><td>{{ record.status|title }}</td><td>{{ record.submitted_by.full_name if record.submitted_by else '-' }}</td><td><a class="btn btn-small btn-primary" href="{{ url_for('attendance.approve', record_id=record.id) }}">Approve</a></td></tr>{% endfor %}</tbody>
+    </table>
+    {% else %}<p class="empty-state">No pending attendance approvals.</p>{% endif %}
+</section>
+{% endblock %}

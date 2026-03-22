@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} | NICAT SMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<section class="form-wrapper card narrow">
+    <h2>Edit user account</h2>
+    <form method="post" class="form-grid">
+        {{ form.hidden_tag() }}
+        <div>{{ form.full_name.label }}{{ form.full_name(class_='form-control') }}</div>
+        <div>{{ form.email.label }}{{ form.email(class_='form-control') }}</div>
+        <div>{{ form.role.label }}{{ form.role(class_='form-control') }}</div>
+        <label class="checkbox-row">{{ form.is_active_user() }} <span>{{ form.is_active_user.label.text }}</span></label>
+        {{ form.submit(class_='btn btn-primary full') }}
+    </form>
+</section>
+{% endblock %}

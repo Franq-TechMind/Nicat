@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Attendance | NICAT SMS{% endblock %}
+{% block page_title %}Attendance center{% endblock %}
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h3>Attendance records</h3>
+        <div class="action-grid">
+            <a class="btn btn-primary" href="{{ url_for('attendance.create') }}">New Attendance</a>
+            <a class="btn btn-secondary" href="{{ url_for('attendance.weekly_review') }}">Weekly Review</a>
+        </div>
+    </div>
+    {% if records %}
+    <table>
+        <thead><tr><th>Date</th><th>Student</th><th>Unit</th><th>Status</th><th>Source</th><th>Approval</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for record in records %}
+        <tr>
+            <td>{{ record.attendance_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ record.student.full_name }}</td>
+            <td>{{ record.unit.code }}</td>
+            <td>{{ record.status|title }}</td>
+            <td>{{ record.source|title }}</td>
+            <td>{{ record.approval_status|title }}</td>
+            <td>{% if record.approval_status == 'pending' and current_user.role in ['super_admin', 'lecturer'] %}<a class="btn btn-small btn-primary" href="{{ url_for('attendance.approve', record_id=record.id) }}">Approve</a>{% endif %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}<p class="empty-state">No attendance records yet.</p>{% endif %}
+</section>
+{% endblock %}

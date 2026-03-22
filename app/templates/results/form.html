@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} | NICAT SMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h3>{{ title }}</h3>
+        <div class="action-grid">
+            <a href="{{ url_for('results.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Results
+            </a>
+        </div>
+    </div>
+</section>
+<section class="card form-wrapper wide">
+    <form method="post" class="form-grid two-col">
+        {{ form.hidden_tag() }}
+        <div>{{ form.student_id.label }}{{ form.student_id(class_='form-control') }}</div>
+        <div>{{ form.unit_id.label }}{{ form.unit_id(class_='form-control') }}</div>
+        <div>{{ form.semester_id.label }}{{ form.semester_id(class_='form-control') }}</div>
+        <div>{{ form.marks.label }}{{ form.marks(class_='form-control') }}</div>
+        <div>{{ form.grade.label }}{{ form.grade(class_='form-control') }}</div>
+        <div>{{ form.remarks.label }}{{ form.remarks(class_='form-control') }}</div>
+        <div class="span-2">{{ form.submit(class_='btn btn-primary') }}</div>
+    </form>
+</section>
+{% endblock %}

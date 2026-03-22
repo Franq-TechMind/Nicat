@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} | NICAT SMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="section-head">
+        <h3>{{ title }}</h3>
+        <div class="action-grid">
+            <a href="{{ url_for('finance.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Finance
+            </a>
+        </div>
+    </div>
+</section>
+<section class="card form-wrapper wide">
+    <form method="post" class="form-grid two-col">
+        {{ form.hidden_tag() }}
+        <div>{{ form.invoice_number.label }}{{ form.invoice_number(class_='form-control') }}</div>
+        <div>{{ form.student_id.label }}{{ form.student_id(class_='form-control') }}</div>
+        <div>{{ form.amount.label }}{{ form.amount(class_='form-control') }}</div>
+        <div>{{ form.balance.label }}{{ form.balance(class_='form-control') }}</div>
+        <div>{{ form.status.label }}{{ form.status(class_='form-control') }}</div>
+        <div>{{ form.due_date.label }}{{ form.due_date(class_='form-control') }}</div>
+        <div class="span-2">{{ form.description.label }}{{ form.description(class_='form-control', rows='4') }}</div>
+        <div class="span-2">{{ form.submit(class_='btn btn-primary') }}</div>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Lecturer Workspace | NICAT SMS{% endblock %}
+{% block page_title %}Lecturer student workspace{% endblock %}
+{% block content %}
+<section class="grid-2">
+    <div class="card">
+        <h3>Your student groups</h3>
+        {% if students %}
+        <table>
+            <thead><tr><th>Admission No</th><th>Name</th><th>Program</th><th>View</th></tr></thead>
+            <tbody>{% for student in students %}<tr><td>{{ student.admission_number }}</td><td>{{ student.full_name }}</td><td>{{ student.program.code }}</td><td><a class="btn btn-small btn-secondary" href="{{ url_for('students.detail', student_id=student.id) }}">Open</a></td></tr>{% endfor %}</tbody>
+        </table>
+        {% else %}<p class="empty-state">No students available for your assigned units.</p>{% endif %}
+    </div>
+    <div class="card">
+        <h3>Attendance risk review</h3>
+        {% if at_risk %}
+        <table>
+            <thead><tr><th>Student</th><th>Attendance %</th></tr></thead>
+            <tbody>{% for student, pct in at_risk %}<tr><td>{{ student.full_name }}</td><td>{{ pct }}%</td></tr>{% endfor %}</tbody>
+        </table>
+        {% else %}<p class="empty-state">No attendance risk alerts right now.</p>{% endif %}
+    </div>
+</section>
+{% endblock %}

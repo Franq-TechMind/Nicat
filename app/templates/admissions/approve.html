@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Approve Application | NICAT SMS{% endblock %}
+{% block page_title %}Approve application{% endblock %}
+
+{% block content %}
+<section class="grid-2">
+    <div class="card">
+        <h3>Applicant details</h3>
+        <p><strong>Application No:</strong> {{ application.application_number }}</p>
+        <p><strong>Name:</strong> {{ application.applicant_name }}</p>
+        <p><strong>Email:</strong> {{ application.email or '-' }}</p>
+        <p><strong>Phone:</strong> {{ application.phone or '-' }}</p>
+        <p><strong>Status:</strong> {{ application.status }}</p>
+        <p><strong>Program:</strong> {{ application.program.name if application.program else '-' }}</p>
+    </div>
+    <div class="card">
+        <h3>Create student record</h3>
+        <form method="post" class="form-grid">
+            {{ form.hidden_tag() }}
+            <div>{{ form.admission_number.label }}{{ form.admission_number(class_='form-control') }}</div>
+            <div>{{ form.first_name.label }}{{ form.first_name(class_='form-control') }}</div>
+            <div>{{ form.last_name.label }}{{ form.last_name(class_='form-control') }}</div>
+            <label class="checkbox-row">{{ form.send_portal_ready_note() }} <span>{{ form.send_portal_ready_note.label.text }}</span></label>
+            {{ form.submit(class_='btn btn-primary') }}
+        </form>
+    </div>
+</section>
+{% endblock %}

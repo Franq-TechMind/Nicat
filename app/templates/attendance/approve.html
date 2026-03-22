@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Approve Attendance | NICAT SMS{% endblock %}
+{% block page_title %}Approve attendance{% endblock %}
+{% block content %}
+<section class="card form-wrapper narrow">
+    <h3>Approve student attendance submission</h3>
+    <p><strong>Student:</strong> {{ record.student.full_name }}</p>
+    <p><strong>Unit:</strong> {{ record.unit.name }} ({{ record.unit.code }})</p>
+    <p><strong>Date:</strong> {{ record.attendance_date.strftime('%Y-%m-%d') }}</p>
+    <p><strong>Status:</strong> {{ record.status|title }}</p>
+    <p><strong>Notes:</strong> {{ record.notes or '-' }}</p>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        {{ form.submit(class_='btn btn-primary') }}
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Lecturer Detail | NICAT SMS{% endblock %}
+{% block page_title %}Lecturer management detail{% endblock %}
+{% block content %}
+<section class="stats-grid">
+    <div class="stat-card"><span>Name</span><strong>{{ lecturer.full_name }}</strong></div>
+    <div class="stat-card"><span>Staff ID</span><strong>{{ lecturer.staff_id or '-' }}</strong></div>
+    <div class="stat-card"><span>Department</span><strong>{{ lecturer.department_name or '-' }}</strong></div>
+    <div class="stat-card"><span>Results Entered</span><strong>{{ results_count }}</strong></div>
+</section>
+<section class="grid-2 mt-24">
+    <div class="card">
+        <h3>Profile</h3>
+        <p><strong>Email:</strong> {{ lecturer.email }}</p>
+        <p><strong>Phone:</strong> {{ lecturer.phone or '-' }}</p>
+        <p><strong>Specialization:</strong> {{ lecturer.specialization or '-' }}</p>
+        <p><strong>Status:</strong> {{ 'Active' if lecturer.is_active_user else 'Inactive' }}</p>
+    </div>
+    <div class="card">
+        <h3>Workload summary</h3>
+        <p><strong>Assigned Units:</strong> {{ unit_assignments|length }}</p>
+        <p><strong>Assigned Students:</strong> {{ student_assignments|length }}</p>
+        <p><strong>Timetable Entries:</strong> {{ timetable_entries|length }}</p>
+    </div>
+</section>
+<section class="grid-2 mt-24">
+    <div class="card">
+        <h3>Unit assignments</h3>
+        {% if unit_assignments %}
+        <table><thead><tr><th>Unit</th><th>Action</th></tr></thead><tbody>{% for item in unit_assignments %}<tr><td>{{ item.unit.name }} ({{ item.unit.code }})</td><td><form method="post" action="{{ url_for('academics.remove_lecturer_unit_assignment', assignment_id=item.id) }}"><button class="btn btn-small btn-danger" type="submit">Remove</button></form></td></tr>{% endfor %}</tbody></table>
+        {% else %}<p class="empty-state">No assigned units.</p>{% endif %}
+    </div>
+    <div class="card">
+        <h3>Student assignments</h3>
+        {% if student_assignments %}
+        <table><thead><tr><th>Student</th><th>Action</th></tr></thead><tbody>{% for item in student_assignments %}<tr><td>{{ item.student.full_name }} ({{ item.student.admission_number }})</td><td><form method="post" action="{{ url_for('academics.remove_lecturer_student_assignment', assignment_id=item.id) }}"><button class="btn btn-small btn-danger" type="submit">Remove</button></form></td></tr>{% endfor %}</tbody></table>
+        {% else %}<p class="empty-state">No assigned students.</p>{% endif %}
+    </div>
+</section>
+<section class="card mt-24">
+    <h3>Timetable</h3>
+    {% if timetable_entries %}
+    <table><thead><tr><th>Day</th><th>Unit</th><th>Time</th><th>Room</th></tr></thead><tbody>{% for entry in timetable_entries %}<tr><td>{{ entry.day_of_week }}</td><td>{{ entry.unit.code }}</td><td>{{ entry.start_time }} - {{ entry.end_time }}</td><td>{{ entry.room or '-' }}</td></tr>{% endfor %}</tbody></table>
+    {% else %}<p class="empty-state">No timetable entries assigned.</p>{% endif %}
+</section>
+{% endblock %}

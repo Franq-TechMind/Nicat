@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}My Profile | NICAT SMS{% endblock %}
+{% block page_title %}My profile{% endblock %}
+{% block content %}
+<section class="grid-2">
+    <div class="card">
+        <h3>Profile details</h3>
+        <form method="post" class="form-grid">
+            {{ form.hidden_tag() }}
+            <div>{{ form.full_name.label }}{{ form.full_name(class_='form-control') }}</div>
+            <div>{{ form.email.label }}{{ form.email(class_='form-control') }}</div>
+            {% if form.staff_id is defined %}
+            <div>{{ form.staff_id.label }}{{ form.staff_id(class_='form-control') }}</div>
+            <div>{{ form.phone.label }}{{ form.phone(class_='form-control') }}</div>
+            <div>{{ form.department_name.label }}{{ form.department_name(class_='form-control') }}</div>
+            <div>{{ form.specialization.label }}{{ form.specialization(class_='form-control') }}</div>
+            {% endif %}
+            {{ form.submit(class_='btn btn-primary') }}
+        </form>
+    </div>
+    <div class="card">
+        <h3>Change password</h3>
+        <form method="post" action="{{ url_for('auth.change_password') }}" class="form-grid">
+            {{ password_form.hidden_tag() }}
+            <div>{{ password_form.current_password.label }}{{ password_form.current_password(class_='form-control') }}</div>
+            <div>{{ password_form.new_password.label }}{{ password_form.new_password(class_='form-control') }}</div>
+            <div>{{ password_form.confirm_password.label }}{{ password_form.confirm_password(class_='form-control') }}</div>
+            {{ password_form.submit(class_='btn btn-secondary') }}
+        </form>
+    </div>
+</section>
+{% endblock %}
